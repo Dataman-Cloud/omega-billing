@@ -82,7 +82,7 @@ func UpdateApp(event *model.Event) error {
 	return nil
 }
 
-func GetBilling(uid, pcount, pnum uint64, order, sortby string) ([]model.Event, error) {
+func GetBilling(uid, pcount, pnum uint64, order, sortby, appname, start, end string) ([]model.Event, error) {
 	db := mysql.DB()
 	if pcount <= 0 || pcount > 100 {
 		pcount = 20
@@ -97,7 +97,11 @@ func GetBilling(uid, pcount, pnum uint64, order, sortby string) ([]model.Event, 
 	if sortby == "" {
 		sortby = "createtime"
 	}
-	sql := `select * from app_event where uid = ? order by ` + sortby + ` ` + order + ` limit ?,?`
+	sql := `select * from app_event where uid = ?`
+	if appname != "" {
+		sql = sql + ` and appname = "` + appname + `"`
+	}
+	sql = sql + ` and createtime between '` + start + `' and '` + end + `' order by ` + sortby + ` ` + order + ` limit ?,?`
 	billings := []model.Event{}
 	err := db.Select(&billings, sql, uid, (pnum-1)*pcount, pcount)
 	for _, billing := range billings {
