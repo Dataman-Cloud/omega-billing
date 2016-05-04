@@ -1,0 +1,209 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/BurntSushi/toml",
+			"repository": "https://github.com/BurntSushi/toml",
+			"revision": "bbd5bb678321a0d6e58f1099321dfa73391c1b6f",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/Jeffail/gabs",
+			"repository": "https://github.com/Jeffail/gabs",
+			"revision": "ee1575a53249b51d636e62464ca43a13030afdb5",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/armon/consul-api",
+			"repository": "https://github.com/armon/consul-api",
+			"revision": "dcfedd50ed5334f96adee43fc88518a4f095e15c",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/coreos/go-etcd/etcd",
+			"repository": "https://github.com/coreos/go-etcd",
+			"revision": "003851be7bb0694fe3cc457a49529a19388ee7cf",
+			"branch": "master",
+			"path": "/etcd",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/dustin/go-broadcast",
+			"repository": "https://github.com/dustin/go-broadcast",
+			"revision": "3bdf6d4a7164a50bc19d5f230e2981d87d2584f1",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/fsnotify/fsnotify",
+			"repository": "https://github.com/fsnotify/fsnotify",
+			"revision": "30411dbcefb7a1da7e84f75530ad3abe4011b4f8",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/garyburd/redigo/internal",
+			"repository": "https://github.com/garyburd/redigo",
+			"revision": "8873b2f1995f59d4bcdd2b0dc9858e2cb9bf0c13",
+			"branch": "master",
+			"path": "/internal",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/garyburd/redigo/redis",
+			"repository": "https://github.com/garyburd/redigo",
+			"revision": "8873b2f1995f59d4bcdd2b0dc9858e2cb9bf0c13",
+			"branch": "master",
+			"path": "/redis",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/gin-gonic/gin",
+			"repository": "https://github.com/gin-gonic/gin",
+			"revision": "542be2fe77724f800fcab7eb6c01a4e597fb8506",
+			"branch": "develop",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/golang/protobuf/proto",
+			"repository": "https://github.com/golang/protobuf",
+			"revision": "7cc19b78d562895b13596ddce7aafb59dd789318",
+			"branch": "master",
+			"path": "/proto",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/hashicorp/hcl",
+			"repository": "https://github.com/hashicorp/hcl",
+			"revision": "27a57f2605e04995c111273c263d51cee60d9bc4",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/jmoiron/sqlx",
+			"repository": "https://github.com/jmoiron/sqlx",
+			"revision": "398dd5876282499cdfd4cb8ea0f31a672abe9495",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/kr/pretty",
+			"repository": "https://github.com/kr/pretty",
+			"revision": "add1dbc86daf0f983cd4a48ceb39deb95c729b67",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/kr/text",
+			"repository": "https://github.com/kr/text",
+			"revision": "bb797dc4fb8320488f47bf11de07a733d7233e1f",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/magiconair/properties",
+			"repository": "https://github.com/magiconair/properties",
+			"revision": "c265cfa48dda6474e208715ca93e987829f572f8",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/manucorporat/sse",
+			"repository": "https://github.com/manucorporat/sse",
+			"revision": "ee05b128a739a0fb76c7ebd3ae4810c1de808d6d",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/manucorporat/stats",
+			"repository": "https://github.com/manucorporat/stats",
+			"revision": "8f2d6ace262eba462e9beb552382c98be51d807b",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/mitchellh/mapstructure",
+			"repository": "https://github.com/mitchellh/mapstructure",
+			"revision": "d2dd0262208475919e1a362f675cfc0e7c10e905",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/spf13/cast",
+			"repository": "https://github.com/spf13/cast",
+			"revision": "27b586b42e29bec072fe7379259cc719e1289da6",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/spf13/jwalterweatherman",
+			"repository": "https://github.com/spf13/jwalterweatherman",
+			"revision": "33c24e77fb80341fe7130ee7c594256ff08ccc46",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/spf13/pflag",
+			"repository": "https://github.com/spf13/pflag",
+			"revision": "8f6a28b0916586e7f22fe931ae2fcfc380b1c0e6",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/spf13/viper",
+			"repository": "https://github.com/spf13/viper",
+			"revision": "f904a1790545169368e8d37badd19d1895d94f29",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/ugorji/go/codec",
+			"repository": "https://github.com/ugorji/go",
+			"revision": "a396ed22fc049df733440d90efe17475e3929ccb",
+			"branch": "master",
+			"path": "/codec",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/xordataexchange/crypt/backend",
+			"repository": "https://github.com/xordataexchange/crypt",
+			"revision": "749e360c8f236773f28fc6d3ddfce4a470795227",
+			"branch": "master",
+			"path": "/backend",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/xordataexchange/crypt/config",
+			"repository": "https://github.com/xordataexchange/crypt",
+			"revision": "749e360c8f236773f28fc6d3ddfce4a470795227",
+			"branch": "master",
+			"path": "/config",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/xordataexchange/crypt/encoding/secconf",
+			"repository": "https://github.com/xordataexchange/crypt",
+			"revision": "749e360c8f236773f28fc6d3ddfce4a470795227",
+			"branch": "master",
+			"path": "/encoding/secconf",
+			"notests": true
+		},
+		{
+			"importpath": "gopkg.in/go-playground/validator.v8",
+			"repository": "https://gopkg.in/go-playground/validator.v8",
+			"revision": "014792cf3e266caff1e916876be12282b33059e0",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "gopkg.in/yaml.v2",
+			"repository": "https://gopkg.in/yaml.v2",
+			"revision": "a83829b6f1293c91addabc89d0571c246397bbf4",
+			"branch": "v2",
+			"notests": true
+		}
+	]
+}
