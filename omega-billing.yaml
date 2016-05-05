@@ -14,7 +14,9 @@ mq:
   port: 5672
   queueTTL: 86400000
   messageTTL: 300000
-  consumeName: "test-queue"
+  exchange: "application"
+  routingkey: "cluster"
+  consumeName: "billing"
 mysql:
   username: "root"
   password: "dataman1234"

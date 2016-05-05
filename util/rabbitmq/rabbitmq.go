@@ -24,17 +24,46 @@ func init() {
 	connection, err = amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%d/", GetConfig().Mq.User, GetConfig().Mq.PassWord, GetConfig().Mq.Host, GetConfig().Mq.Port))
 	if err != nil {
 		log.Errorf("connection rabbitmq error: %v", err)
+		log.Flush()
 		panic(-1)
 	}
 	channel, err = connection.Channel()
 	if err != nil {
 		log.Errorf("get rabbitmq channel error: %v", err)
+		log.Flush()
+		panic(-1)
+	}
+	queue, err := DeclareQueue(channel, GetConfig().Mq.ConsumeName)
+	if err != nil {
+		log.Errorf("declare queue %s error: %v", GetConfig().Mq.ConsumeName, err)
+		log.Flush()
+		panic(-1)
+	}
+	err = channel.QueueBind(queue.Name, GetConfig().Mq.Routingkey, GetConfig().Mq.Exchange, false, nil)
+	if err != nil {
+		log.Errorf("queue bind queuename:%s key:%s exchangename:%s error: %v", queue.Name, GetConfig().Mq.Routingkey, GetConfig().Mq.Exchange, err)
+		log.Flush()
 		panic(-1)
 	}
 }
 
+func DeclareQueue(channel *amqp.Channel, name string) (amqp.Queue, error) {
+	args := amqp.Table{
+		"x-message-ttl": GetConfig().Mq.MessageTTL,
+		"x-expires":     GetConfig().Mq.QueueTTL,
+	}
+	return channel.QueueDeclare(
+		name,
+		true,
+		false,
+		false,
+		false,
+		args,
+	)
+}
+
 func ReciveQueue(queue string) (<-chan amqp.Delivery, error) {
-	cs, err := channel.Consume(queue, "testsimple", true, false, false, false, nil)
+	cs, err := channel.Consume(queue, "", true, false, false, false, nil)
 	return cs, err
 }
 

@@ -33,8 +33,10 @@ type MqConfig struct {
 	PassWord    string
 	Host        string
 	Port        uint16
-	QueueTTL    uint64
-	MessageTTL  uint64
+	QueueTTL    int64
+	MessageTTL  int64
+	Exchange    string
+	Routingkey  string
 	ConsumeName string
 }
 
