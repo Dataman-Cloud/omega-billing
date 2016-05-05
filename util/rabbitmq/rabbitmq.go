@@ -106,7 +106,7 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		log.Errorf("base32 stdencoding id error: %v", err)
 		return nil, err
 	}
-	ids := strings.Split(id, ":")
+	ids := strings.SplitAfterN(id, ":", 2)
 	if len(ids) != 2 {
 		log.Errorf("split marathon id is not 2 len: %d", len(ids))
 		return nil, errors.New("split marathon id is not 2 len")
