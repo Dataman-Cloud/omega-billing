@@ -31,6 +31,7 @@ func Run() {
 	v3 := r.Group("/api/v3/billing", Authenticate)
 	{
 		v3.GET("/list", controller.BillingList)
+		v3.GET("/health", controller.Health)
 	}
 
 	s := &http.Server{
