@@ -23,6 +23,13 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/cihub/seelog",
+			"repository": "https://github.com/cihub/seelog",
+			"revision": "a98235bd6d927ba8379ef4f0050c32c9a2ea17b8",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/coreos/go-etcd/etcd",
 			"repository": "https://github.com/coreos/go-etcd",
 			"revision": "003851be7bb0694fe3cc457a49529a19388ee7cf",
@@ -65,6 +72,13 @@
 			"repository": "https://github.com/gin-gonic/gin",
 			"revision": "542be2fe77724f800fcab7eb6c01a4e597fb8506",
 			"branch": "develop",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/go-sql-driver/mysql",
+			"repository": "https://github.com/go-sql-driver/mysql",
+			"revision": "7ebe0a500653eeb1859664bed5e48dec1e164e73",
+			"branch": "master",
 			"notests": true
 		},
 		{
@@ -125,6 +139,46 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/mattes/migrate/driver",
+			"repository": "https://github.com/mattes/migrate",
+			"revision": "ce1b59bb819416ca67422929b1cb48bb342720b6",
+			"branch": "master",
+			"path": "/driver",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/mattes/migrate/driver/mysql",
+			"repository": "https://github.com/mattes/migrate",
+			"revision": "ce1b59bb819416ca67422929b1cb48bb342720b6",
+			"branch": "master",
+			"path": "/driver/mysql",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/mattes/migrate/file",
+			"repository": "https://github.com/mattes/migrate",
+			"revision": "ce1b59bb819416ca67422929b1cb48bb342720b6",
+			"branch": "master",
+			"path": "/file",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/mattes/migrate/migrate",
+			"repository": "https://github.com/mattes/migrate",
+			"revision": "ce1b59bb819416ca67422929b1cb48bb342720b6",
+			"branch": "master",
+			"path": "/migrate",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/mattes/migrate/pipe",
+			"repository": "https://github.com/mattes/migrate",
+			"revision": "ce1b59bb819416ca67422929b1cb48bb342720b6",
+			"branch": "master",
+			"path": "/pipe",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/mitchellh/mapstructure",
 			"repository": "https://github.com/mitchellh/mapstructure",
 			"revision": "d2dd0262208475919e1a362f675cfc0e7c10e905",
@@ -156,6 +210,13 @@
 			"importpath": "github.com/spf13/viper",
 			"repository": "https://github.com/spf13/viper",
 			"revision": "f904a1790545169368e8d37badd19d1895d94f29",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/streadway/amqp",
+			"repository": "https://github.com/streadway/amqp",
+			"revision": "2e25825abdbd7752ff08b270d313b93519a0a232",
 			"branch": "master",
 			"notests": true
 		},
