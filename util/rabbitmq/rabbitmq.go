@@ -95,6 +95,9 @@ func EventProcess(body []byte) error {
 	err := json.Unmarshal(body, &message)
 	message.Method = message.Task["method"].(string)
 	message.Meta = message.Task["metadata"].(string)
+	if message.Method != "GET" {
+		log.Debug("========", string(body))
+	}
 	if err != nil {
 		log.Errorf("unmarshal message error: %v", err)
 		return err
