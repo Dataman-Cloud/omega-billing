@@ -159,6 +159,7 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 	for v, billing := range billings {
 		if billing.Active {
 			billings[v].TimeLen = util.ParseTimeLen(time.Now().Unix() - billing.CreateTime.Unix())
+			billings[v].EndTime = time.Now()
 		} else {
 			billings[v].TimeLen = util.ParseTimeLen(billing.EndTime.Unix() - billing.CreateTime.Unix())
 		}
