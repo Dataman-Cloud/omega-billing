@@ -59,6 +59,14 @@ func DeleteApp(event *model.Event) error {
 	return nil
 }
 
+func GetBilling(event *model.Event) (model.Event, error) {
+	db := mysql.DB()
+	billing := model.Event{}
+	sql := `select * from app_event where uid=? and cid=? and appname=? and active=true`
+	err := db.Get(&billing, sql, event.Uid, event.Cid, event.AppName)
+	return billing, err
+}
+
 func UpdateApp(event *model.Event) error {
 	db := mysql.DB()
 	count := 0

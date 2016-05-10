@@ -131,6 +131,7 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		log.Errorf("string cluserid parse to uint error: %v", err)
 		return nil, err
 	}
+	log.Debug("------------:", message.Meta)
 	mjson, err := gabs.ParseJSON([]byte(message.Meta))
 	if err != nil {
 		log.Errorf("string marathon parse to json error: %v", err)
@@ -173,14 +174,25 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		Uid:        uid,
 		AppName:    ids[1],
 	}
+	billing, err := dao.GetBilling(event)
+	if err != nil {
+		log.Errorf("get billing error: %v", err)
+		return nil, err
+	}
 	if cpus := mjson.Path("cpus").Data(); cpus != nil {
 		event.Cpus = cpus.(float64)
+	} else {
+		event.Cpus = billing.Cpus
 	}
 	if mem := mjson.Path("mem").Data(); mem != nil {
 		event.Mem = mem.(float64)
+	} else {
+		event.Mem = billing.Mem
 	}
 	if instances := mjson.Path("instances").Data(); instances != nil {
 		event.Instances = uint32(instances.(float64))
+	} else {
+		event.Instances = billing.Instances
 	}
 	return event, nil
 }
