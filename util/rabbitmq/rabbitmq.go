@@ -95,7 +95,6 @@ func EventProcess(body []byte) error {
 	err := json.Unmarshal(body, &message)
 	message.Method = message.Task["method"].(string)
 	message.Meta = message.Task["metadata"].(string)
-	log.Debug("+++++++++:", message.Method, message.Meta)
 	if err != nil {
 		log.Errorf("unmarshal message error: %v", err)
 		return err
@@ -134,6 +133,7 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		return nil, err
 	}
 	id, err := util.ParseAppAlias(mjson.Path("id").Data().(string))
+	log.Debug("=============", id, err)
 	if err != nil {
 		log.Errorf("base32 stdencoding id error: %v", err)
 		return nil, err
