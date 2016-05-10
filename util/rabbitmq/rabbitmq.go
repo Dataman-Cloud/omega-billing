@@ -133,12 +133,11 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		return nil, err
 	}
 	id, err := util.ParseAppAlias(mjson.Path("id").Data().(string))
-	log.Debug("=============", id, err)
 	if err != nil {
 		log.Errorf("base32 stdencoding id error: %v", err)
 		return nil, err
 	}
-	ids := strings.SplitAfterN(id, ":", 2)
+	ids := strings.SplitN(id, ":", 2)
 	if len(ids) != 2 {
 		log.Errorf("split marathon id is not 2 len: %d", len(ids))
 		return nil, errors.New("split marathon id is not 2 len")
