@@ -30,4 +30,5 @@ type Message struct {
 	Path      string
 	Uri       string
 	ReplyTo   string
+	Task      map[string]interface{}
 }

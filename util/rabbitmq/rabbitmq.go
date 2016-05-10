@@ -93,6 +93,9 @@ func Run() {
 func EventProcess(body []byte) error {
 	var message model.Message
 	err := json.Unmarshal(body, &message)
+	message.Method = message.Task["method"].(string)
+	message.Meta = message.Task["metadata"].(string)
+	log.Debug("+++++++++:", message.Method, message.Meta)
 	if err != nil {
 		log.Errorf("unmarshal message error: %v", err)
 		return err
@@ -100,7 +103,6 @@ func EventProcess(body []byte) error {
 	switch message.Method {
 	case "POST":
 		event, err := newEvent(&message)
-		log.Debug("+++++++++:", string(body), err)
 		if err == nil {
 			dao.AddEvent(event)
 		}
