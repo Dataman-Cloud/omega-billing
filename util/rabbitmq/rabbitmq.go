@@ -136,6 +136,7 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		return nil, err
 	}
 	log.Debug("---------:", mjson.String())
+	return nil, errors.New("---------")
 	id, err := util.ParseAppAlias(mjson.Path("id").Data().(string))
 	if err != nil {
 		log.Errorf("base32 stdencoding id error: %v", err)
