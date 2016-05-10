@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"errors"
 	"fmt"
 	"github.com/Dataman-Cloud/omega-billing/model"
 	"github.com/Dataman-Cloud/omega-billing/util"
@@ -71,28 +70,15 @@ func GetBilling(event *model.Event) (model.Event, error) {
 
 func UpdateApp(event *model.Event) error {
 	db := mysql.DB()
-	count := 0
-	err := db.Get(&count, `select count(*) from app_event where uid=? and cid=? and appname=? and active=true`, event.Uid, event.Cid, event.AppName)
-	if err != nil {
-		log.Error("can't get app_event by uid and cid and appname and active=true")
-		return errors.New("can't get app_event by uid and cid and appname and active=true")
-	}
-	/*if count > 0 {
-		sql := `update app_event set endtime = :endtime, active = false where uid = :uid and cid = :cid and appname = :appname and active = true`
-		_, err := db.NamedExec(sql, event)
-		if err != nil {
-			log.Errorf("update app_event error: %v", err)
-			return err
-		}
-	}*/
 	tx := db.MustBegin()
-	_, err = tx.Exec(`update app_event set endtime=?, active=? where uid=? and cid=? and appname=? and active=true`, event.EndTime, event.Active, event.Uid, event.Cid, event.AppName)
+	_, err := tx.Exec(`update app_event set endtime=?, active=? where uid=? and cid=? and appname=? and active=true`, event.EndTime, event.Active, event.Uid, event.Cid, event.AppName)
 	if err != nil {
 		log.Errorf("update app update table app_event error: %v", err)
 		tx.Rollback()
 		return err
 	}
 	event.Active = true
+	event.CreateTime = event.EndTime
 	_, err = tx.Exec(`insert into app_event(uid, cid, appname, active, createtime, endtime, cpus, mem, instances) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`, event.Uid, event.Cid, event.AppName, event.Active, event.CreateTime, event.EndTime, event.Cpus, event.Mem, event.Instances)
 	if err != nil {
 		log.Errorf("update app insert into table app_event error: %v", err)
