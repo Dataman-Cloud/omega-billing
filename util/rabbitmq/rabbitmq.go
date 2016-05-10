@@ -96,9 +96,6 @@ func EventProcess(body []byte) error {
 	message.Method = message.Task["method"].(string)
 	message.Meta = message.Task["metadata"].(string)
 	message.Path = message.Task["path"].(string)
-	if message.Method != "GET" {
-		log.Debug("========", string(body), message.Task["metadata"].(string))
-	}
 	if err != nil {
 		log.Errorf("unmarshal message error: %v", err)
 		return err
@@ -110,13 +107,13 @@ func EventProcess(body []byte) error {
 			dao.AddEvent(event)
 		}
 	case "DELETE":
-		event, err := newEvent(&message)
+		event, err := newDeleteEvent(&message)
 		if err == nil {
 			event.Active = false
 			dao.DeleteApp(event)
 		}
 	case "PUT":
-		event, err := newEvent(&message)
+		event, err := newUpdateEvent(&message)
 		if err == nil {
 			event.Active = false
 			dao.UpdateApp(event)
@@ -125,13 +122,120 @@ func EventProcess(body []byte) error {
 	return nil
 }
 
+func newUpdateEvent(message *model.Message) (*model.Event, error) {
+	cid, err := strconv.ParseUint(message.ClusterId, 10, 64)
+	if err != nil {
+		log.Errorf("string cluserid parse to uint error: %v", err)
+		return nil, err
+	}
+	mjson, err := gabs.ParseJSON([]byte(message.Meta))
+	if err != nil {
+		log.Errorf("string marathon parse to json error: %v", err)
+		return nil, err
+	}
+	id, err := util.ParseAppAlias(strings.Replace(message.Path, "/v2/apps/", "", 1))
+	if err != nil {
+		log.Errorf("base32 stdencoding id error1: %v", err)
+		return nil, err
+	}
+	ids := strings.SplitN(id, ":", 2)
+	if len(ids) != 2 {
+		log.Errorf("split marathon id is not 2 len: %d", len(ids))
+		return nil, errors.New("split marathon id is not 2 len")
+	}
+	uid, err := strconv.ParseUint(ids[0], 10, 64)
+	if err != nil {
+		log.Errorf("parse uid string to uint64 error: %v", err)
+		return nil, err
+	}
+	timen := time.Now()
+	event := &model.Event{
+		Cid:        cid,
+		CreateTime: timen,
+		EndTime:    timen,
+		Active:     true,
+		Uid:        uid,
+		AppName:    ids[1],
+	}
+	billing, err := dao.GetBilling(event)
+	if cpus := mjson.Path("cpus").Data(); cpus != nil {
+		event.Cpus = cpus.(float64)
+	} else {
+		if err != nil {
+			log.Errorf("get billing error1: %v", err)
+			return nil, err
+		}
+		event.Cpus = billing.Cpus
+	}
+	if mem := mjson.Path("mem").Data(); mem != nil {
+		event.Mem = mem.(float64)
+	} else {
+		if err != nil {
+			log.Errorf("get billing error2: %v", err)
+			return nil, err
+		}
+		event.Mem = billing.Mem
+	}
+	if instances := mjson.Path("instances").Data(); instances != nil {
+		event.Instances = uint32(instances.(float64))
+	} else {
+		if err != nil {
+			log.Errorf("get billing error3: %v", err)
+			return nil, err
+		}
+		event.Instances = billing.Instances
+	}
+	return event, nil
+}
+
+func newDeleteEvent(message *model.Message) (*model.Event, error) {
+	cid, err := strconv.ParseUint(message.ClusterId, 10, 64)
+	if err != nil {
+		log.Errorf("string cluserid parse to uint error: %v", err)
+		return nil, err
+	}
+	id, err := util.ParseAppAlias(strings.Replace(message.Path, "/v2/apps/", "", 1))
+	if err != nil {
+		log.Errorf("base32 stdencoding id error1: %v", err)
+		return nil, err
+	}
+	ids := strings.SplitN(id, ":", 2)
+	if len(ids) != 2 {
+		log.Errorf("split marathon id is not 2 len: %d", len(ids))
+		return nil, errors.New("split marathon id is not 2 len")
+	}
+	uid, err := strconv.ParseUint(ids[0], 10, 64)
+	if err != nil {
+		log.Errorf("parse uid string to uint64 error: %v", err)
+		return nil, err
+	}
+	timen := time.Now()
+	event := &model.Event{
+		Cid:        cid,
+		CreateTime: timen,
+		EndTime:    timen,
+		Active:     true,
+		Uid:        uid,
+		AppName:    ids[1],
+	}
+	billing, err := dao.GetBilling(event)
+	if err != nil {
+		log.Errorf("get billing error1: %v", err)
+		return nil, err
+	}
+	event.Cpus = billing.Cpus
+	event.Mem = billing.Mem
+	event.Instances = billing.Instances
+	return event, nil
+}
+
 func newEvent(message *model.Message) (*model.Event, error) {
 	cid, err := strconv.ParseUint(message.ClusterId, 10, 64)
 	if err != nil {
 		log.Errorf("string cluserid parse to uint error: %v", err)
 		return nil, err
 	}
-	log.Debug("------------:", message.Meta)
+	//log.Debug("------------:", message.Meta)
 	mjson, err := gabs.ParseJSON([]byte(message.Meta))
 	if err != nil {
 		log.Errorf("string marathon parse to json error: %v", err)
@@ -175,23 +279,31 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		AppName:    ids[1],
 	}
 	billing, err := dao.GetBilling(event)
-	if err != nil {
-		log.Errorf("get billing error: %v", err)
-		return nil, err
-	}
 	if cpus := mjson.Path("cpus").Data(); cpus != nil {
 		event.Cpus = cpus.(float64)
 	} else {
+		if err != nil {
+			log.Errorf("get billing error1: %v", err)
+			return nil, err
+		}
 		event.Cpus = billing.Cpus
 	}
 	if mem := mjson.Path("mem").Data(); mem != nil {
 		event.Mem = mem.(float64)
 	} else {
+		if err != nil {
+			log.Errorf("get billing error2: %v", err)
+			return nil, err
+		}
 		event.Mem = billing.Mem
 	}
 	if instances := mjson.Path("instances").Data(); instances != nil {
 		event.Instances = uint32(instances.(float64))
 	} else {
+		if err != nil {
+			log.Errorf("get billing error3: %v", err)
+			return nil, err
+		}
 		event.Instances = billing.Instances
 	}
 	return event, nil
