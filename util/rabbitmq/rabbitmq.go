@@ -95,6 +95,7 @@ func EventProcess(body []byte) error {
 	err := json.Unmarshal(body, &message)
 	message.Method = message.Task["method"].(string)
 	message.Meta = message.Task["metadata"].(string)
+	message.Path = message.Task["path"].(string)
 	if message.Method != "GET" {
 		log.Debug("========", string(body), message.Task["metadata"].(string))
 	}
@@ -135,12 +136,19 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		log.Errorf("string marathon parse to json error: %v", err)
 		return nil, err
 	}
-	log.Debug("---------:", mjson.String())
-	return nil, errors.New("---------")
-	id, err := util.ParseAppAlias(mjson.Path("id").Data().(string))
-	if err != nil {
-		log.Errorf("base32 stdencoding id error: %v", err)
-		return nil, err
+	id := ""
+	if mjson.Path("id").Data() == nil {
+		id = strings.Replace(message.Path, "/v2/apps/", "", 1)
+	} else {
+		id, err = util.ParseAppAlias(mjson.Path("id").Data().(string))
+		if err != nil {
+			log.Errorf("base32 stdencoding id error: %v", err)
+			return nil, err
+		}
+	}
+	if id == "" {
+		log.Errorf("app id can't null")
+		return nil, errors.New("app id can't null")
 	}
 	ids := strings.SplitN(id, ":", 2)
 	if len(ids) != 2 {
