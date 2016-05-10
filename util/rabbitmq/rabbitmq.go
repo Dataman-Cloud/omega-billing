@@ -235,29 +235,15 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		log.Errorf("string cluserid parse to uint error: %v", err)
 		return nil, err
 	}
-	//log.Debug("------------:", message.Meta)
 	mjson, err := gabs.ParseJSON([]byte(message.Meta))
 	if err != nil {
 		log.Errorf("string marathon parse to json error: %v", err)
 		return nil, err
 	}
-	id := ""
-	if mjson.Path("id").Data() == nil {
-		id, err = util.ParseAppAlias(strings.Replace(message.Path, "/v2/apps/", "", 1))
-		if err != nil {
-			log.Errorf("base32 stdencoding id error1: %v", err)
-			return nil, err
-		}
-	} else {
-		id, err = util.ParseAppAlias(mjson.Path("id").Data().(string))
-		if err != nil {
-			log.Errorf("base32 stdencoding id error2: %v", err)
-			return nil, err
-		}
-	}
-	if id == "" {
-		log.Errorf("app id can't null")
-		return nil, errors.New("app id can't null")
+	id, err := util.ParseAppAlias(mjson.Path("id").Data().(string))
+	if err != nil {
+		log.Errorf("base32 stdencoding id error2: %v", err)
+		return nil, err
 	}
 	ids := strings.SplitN(id, ":", 2)
 	if len(ids) != 2 {
@@ -269,6 +255,9 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		log.Errorf("parse uid string to uint64 error: %v", err)
 		return nil, err
 	}
+	cpus := mjson.Path("cpus").Data().(float64)
+	mem := mjson.Path("mem").Data().(float64)
+	instances := mjson.Path("instances").Data().(float64)
 	timen := time.Now()
 	event := &model.Event{
 		Cid:        cid,
@@ -277,34 +266,9 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		Active:     true,
 		Uid:        uid,
 		AppName:    ids[1],
-	}
-	billing, err := dao.GetBilling(event)
-	if cpus := mjson.Path("cpus").Data(); cpus != nil {
-		event.Cpus = cpus.(float64)
-	} else {
-		if err != nil {
-			log.Errorf("get billing error1: %v", err)
-			return nil, err
-		}
-		event.Cpus = billing.Cpus
-	}
-	if mem := mjson.Path("mem").Data(); mem != nil {
-		event.Mem = mem.(float64)
-	} else {
-		if err != nil {
-			log.Errorf("get billing error2: %v", err)
-			return nil, err
-		}
-		event.Mem = billing.Mem
-	}
-	if instances := mjson.Path("instances").Data(); instances != nil {
-		event.Instances = uint32(instances.(float64))
-	} else {
-		if err != nil {
-			log.Errorf("get billing error3: %v", err)
-			return nil, err
-		}
-		event.Instances = billing.Instances
+		Cpus:       cpus,
+		Mem:        mem,
+		Instances:  uint32(instances),
 	}
 	return event, nil
 }

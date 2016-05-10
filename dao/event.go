@@ -75,14 +75,14 @@ func UpdateApp(event *model.Event) error {
 		log.Error("can't get app_event by uid and cid and appname and active=true")
 		return errors.New("can't get app_event by uid and cid and appname and active=true")
 	}
-	if count > 0 {
+	/*if count > 0 {
 		sql := `update app_event set endtime = :endtime, active = false where uid = :uid and cid = :cid and appname = :appname and active = true`
 		_, err := db.NamedExec(sql, event)
 		if err != nil {
 			log.Errorf("update app_event error: %v", err)
 			return err
 		}
-	}
+	}*/
 	tx := db.MustBegin()
 	_, err = tx.Exec(`update app_event set endtime=?, active=? where uid=? and cid=? and appname=? and active=true`, event.EndTime, event.Active, event.Uid, event.Cid, event.AppName)
 	if err != nil {
@@ -91,7 +91,7 @@ func UpdateApp(event *model.Event) error {
 		return err
 	}
 	event.Active = true
-	_, err = tx.Exec(`insert into app_event(uid, cid, appname, active, createtime,cpus, mem, instances) values (?, ?, ?, ?, ?, ?, ?, ?)`, event.Uid, event.Cid, event.AppName, event.Active, event.CreateTime, event.Cpus, event.Mem, event.Instances)
+	_, err = tx.Exec(`insert into app_event(uid, cid, appname, active, createtime, endtime, cpus, mem, instances) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`, event.Uid, event.Cid, event.AppName, event.Active, event.CreateTime, event.EndTime, event.Cpus, event.Mem, event.Instances)
 	if err != nil {
 		log.Errorf("update app insert into table app_event error: %v", err)
 		tx.Rollback()
