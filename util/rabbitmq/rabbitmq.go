@@ -135,7 +135,7 @@ func newUpdateEvent(message *model.Message) (*model.Event, error) {
 	}
 	id, err := util.ParseAppAlias(strings.Replace(message.Path, "/v2/apps/", "", 1))
 	if err != nil {
-		log.Errorf("base32 stdencoding id error1: %v", err)
+		log.Errorf("base32 stdencoding id error1: %v %s", err, strings.Replace(message.Path, "/v2/apps/", "", 1))
 		return nil, err
 	}
 	ids := strings.SplitN(id, ":", 2)
@@ -148,7 +148,8 @@ func newUpdateEvent(message *model.Message) (*model.Event, error) {
 		log.Errorf("parse uid string to uint64 error: %v", err)
 		return nil, err
 	}
-	timen := time.Now()
+	//timen := time.Now()
+	timen := time.Unix(message.Timestamp, 0)
 	event := &model.Event{
 		Cid:        cid,
 		CreateTime: timen,
@@ -196,7 +197,7 @@ func newDeleteEvent(message *model.Message) (*model.Event, error) {
 	}
 	id, err := util.ParseAppAlias(strings.Replace(message.Path, "/v2/apps/", "", 1))
 	if err != nil {
-		log.Errorf("base32 stdencoding id error1: %v", err)
+		log.Errorf("base32 stdencoding id error1: %v %s", err, strings.Replace(message.Path, "/v2/apps/", "", 1))
 		return nil, err
 	}
 	ids := strings.SplitN(id, ":", 2)
@@ -209,7 +210,8 @@ func newDeleteEvent(message *model.Message) (*model.Event, error) {
 		log.Errorf("parse uid string to uint64 error: %v", err)
 		return nil, err
 	}
-	timen := time.Now()
+	//timen := time.Now()
+	timen := time.Unix(message.Timestamp, 0)
 	event := &model.Event{
 		Cid:        cid,
 		CreateTime: timen,
@@ -258,7 +260,8 @@ func newEvent(message *model.Message) (*model.Event, error) {
 	cpus := mjson.Path("cpus").Data().(float64)
 	mem := mjson.Path("mem").Data().(float64)
 	instances := mjson.Path("instances").Data().(float64)
-	timen := time.Now()
+	//timen := time.Now()
+	timen := time.Unix(message.Timestamp, 0)
 	event := &model.Event{
 		Cid:        cid,
 		CreateTime: timen,

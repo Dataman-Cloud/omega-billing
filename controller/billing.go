@@ -2,12 +2,13 @@ package controller
 
 import (
 	"errors"
+	"fmt"
 	"github.com/Dataman-Cloud/omega-billing/dao"
 	"github.com/Dataman-Cloud/omega-billing/util"
 	"github.com/Dataman-Cloud/omega-billing/util/mysql"
 	rd "github.com/Dataman-Cloud/omega-billing/util/redis"
+	log "github.com/cihub/seelog"
 	"github.com/garyburd/redigo/redis"
-	//log "github.com/cihub/seelog"
 	"github.com/gin-gonic/gin"
 	"strconv"
 	"time"
@@ -48,19 +49,34 @@ func Health(c *gin.Context) {
 func BillingList(c *gin.Context) {
 	userid, ok := c.Get("uid")
 	if !ok {
+		log.Error("can't get userid")
 		util.ReturnParamError(c, errors.New("can't get userid"))
+		return
+	}
+	uid, err := strconv.ParseUint(fmt.Sprintf("%s", userid), 10, 64)
+	if err != nil {
+		log.Errorf("parse uid to uint error: %v", err)
+		util.ReturnParamError(c, err)
 		return
 	}
 
 	pcount := c.Query("per_page")
-	pagecount, err := strconv.ParseInt(pcount, 10, 64)
+	if pcount == "" {
+		pcount = "20"
+	}
+	pagecount, err := strconv.ParseUint(pcount, 10, 64)
 	if err != nil {
+		log.Errorf("parse pagecount to uint error: %v", err)
 		util.ReturnParamError(c, err)
 		return
 	}
 	pnum := c.Query("page")
-	pagenum, err := strconv.ParseInt(pnum, 10, 64)
+	if pnum == "" {
+		pnum = "1"
+	}
+	pagenum, err := strconv.ParseUint(pnum, 10, 64)
 	if err != nil {
+		log.Errorf("parse pagenum to uint error: %v", err)
 		util.ReturnParamError(c, err)
 		return
 	}
@@ -68,20 +84,25 @@ func BillingList(c *gin.Context) {
 	sortby := c.Query("sort_by")
 	appname := c.Query("appname")
 	starttime := c.Query("starttime")
-	if starttime == "" {
+	/*if starttime == "" {
 		util.ReturnParamError(c, errors.New("can't find starttime"))
 		return
-	}
+	}*/
 	endtime := c.Query("endtime")
-	if endtime == "" {
+	/*if endtime == "" {
 		util.ReturnParamError(c, errors.New("can't find endtime"))
 		return
-	}
-	billings, err := dao.GetBillings(userid.(uint64), uint64(pagecount), uint64(pagenum), order, sortby, appname, starttime, endtime)
+	}*/
+	billings, count, err := dao.GetBillings(uid, pagecount, pagenum, order, sortby, appname, starttime, endtime)
 	if err != nil {
+		log.Errorf("get billings error: %v", err)
 		util.ReturnDBError(c, err)
 		return
 	}
-	util.ReturnOK(c, billings)
+	//util.ReturnOK(c, billings)
+	util.ReturnOK(c, map[string]interface{}{
+		"billings": billings,
+		"count":    count,
+	})
 	return
 }

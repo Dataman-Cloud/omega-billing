@@ -2,10 +2,12 @@ package dao
 
 import (
 	"errors"
+	"fmt"
 	"github.com/Dataman-Cloud/omega-billing/model"
 	"github.com/Dataman-Cloud/omega-billing/util"
 	"github.com/Dataman-Cloud/omega-billing/util/mysql"
 	log "github.com/cihub/seelog"
+	"strconv"
 	"time"
 )
 
@@ -106,7 +108,7 @@ func UpdateApp(event *model.Event) error {
 	return nil
 }
 
-func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end string) ([]model.Event, error) {
+func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end string) ([]model.Event, int, error) {
 	db := mysql.DB()
 	if pcount <= 0 || pcount > 100 {
 		pcount = 20
@@ -122,18 +124,44 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 		sortby = "createtime"
 	}
 	sql := `select * from app_event where uid = ?`
+	sql1 := `select count(*) from app_event where uid = ?`
 	if appname != "" {
 		sql = sql + ` and appname = "` + appname + `"`
+		sql1 = sql1 + ` and appname = "` + appname + `"`
 	}
-	sql = sql + ` and createtime between '` + start + `' and '` + end + `' order by ` + sortby + ` ` + order + ` limit ?,?`
+	if start != "" && end != "" {
+		starttime, err := strconv.ParseInt(start, 10, 64)
+		if err != nil {
+			log.Errorf("parse start to int64 error: %v", err)
+			return nil, 0, err
+		}
+		endtime, err := strconv.ParseInt(end, 10, 64)
+		if err != nil {
+			log.Errorf("parse end to int64 error: %v", err)
+			return nil, 0, err
+		}
+		sql = sql + ` and createtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339)
+		sql1 = sql1 + ` and createtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339)
+	}
+	count := 0
+	err := db.Get(&count, sql1, uid)
+	if err != nil {
+		log.Errorf("get billing count error: %v", err)
+		return nil, 0, err
+	}
+	if order != "desc" {
+		order = "asc"
+	}
+	sql = sql + ` order by ` + sortby + ` ` + order
+	sql = sql + fmt.Sprintf(" limit %d, %d", (pnum-1)*pcount, pcount)
 	billings := []model.Event{}
-	err := db.Select(&billings, sql, uid, (pnum-1)*pcount, pcount)
-	for _, billing := range billings {
+	err = db.Select(&billings, sql, uid)
+	for v, billing := range billings {
 		if billing.Active {
-			billing.TimeLen = util.ParseTimeLen(time.Now().Unix() - billing.CreateTime.Unix())
+			billings[v].TimeLen = util.ParseTimeLen(time.Now().Unix() - billing.CreateTime.Unix())
 		} else {
-			billing.TimeLen = util.ParseTimeLen(billing.EndTime.Unix() - billing.CreateTime.Unix())
+			billings[v].TimeLen = util.ParseTimeLen(billing.EndTime.Unix() - billing.CreateTime.Unix())
 		}
 	}
-	return billings, err
+	return billings, count, err
 }
