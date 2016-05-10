@@ -91,6 +91,7 @@ func Run() {
 }
 
 func EventProcess(body []byte) error {
+	log.Debug("---------:", string(body))
 	var message model.Message
 	err := json.Unmarshal(body, &message)
 	if err != nil {
