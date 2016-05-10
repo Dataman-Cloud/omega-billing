@@ -164,20 +164,23 @@ func newEvent(message *model.Message) (*model.Event, error) {
 		log.Errorf("parse uid string to uint64 error: %v", err)
 		return nil, err
 	}
-	cpus := mjson.Path("cpus").Data().(float64)
-	mem := mjson.Path("mem").Data().(float64)
-	instances := mjson.Path("instances").Data().(float64)
 	timen := time.Now()
 	event := &model.Event{
 		Cid:        cid,
 		CreateTime: timen,
 		EndTime:    timen,
 		Active:     true,
-		Cpus:       cpus,
-		Mem:        mem,
-		Instances:  uint32(instances),
 		Uid:        uid,
 		AppName:    ids[1],
+	}
+	if cpus := mjson.Path("cpus").Data(); cpus != nil {
+		event.Cpus = cpus.(float64)
+	}
+	if mem := mjson.Path("mem").Data(); mem != nil {
+		event.Mem = mem.(float64)
+	}
+	if instances := mjson.Path("instances").Data(); instances != nil {
+		event.Instances = uint32(instances.(float64))
 	}
 	return event, nil
 }
