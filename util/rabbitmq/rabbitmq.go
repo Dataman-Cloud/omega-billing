@@ -148,7 +148,7 @@ func newUpdateEvent(message *model.Message) (*model.Event, error) {
 		log.Errorf("parse uid string to uint64 error: %v", err)
 		return nil, err
 	}
-	//timen := time.Now()
+	timen := time.Now()
 	timen := time.Unix(message.Timestamp, 0)
 	event := &model.Event{
 		Cid:        cid,
