@@ -86,6 +86,7 @@ func UpdateApp(event *model.Event) error {
 		}
 	}*/
 	tx := db.MustBegin()
+	log.Debug("-----------:", event.EndTime.Format(time.RFC3339))
 	_, err = tx.Exec(`update app_event set endtime=?, active=? where uid=? and cid=? and appname=? and active=true`, event.EndTime, event.Active, event.Uid, event.Cid, event.AppName)
 	if err != nil {
 		log.Errorf("update app update table app_event error: %v", err)
