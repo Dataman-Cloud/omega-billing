@@ -77,7 +77,7 @@ func BillingList(c *gin.Context) {
 		util.ReturnParamError(c, errors.New("can't find endtime"))
 		return
 	}
-	billings, err := dao.GetBilling(userid.(uint64), uint64(pagecount), uint64(pagenum), order, sortby, appname, starttime, endtime)
+	billings, err := dao.GetBillings(userid.(uint64), uint64(pagecount), uint64(pagenum), order, sortby, appname, starttime, endtime)
 	if err != nil {
 		util.ReturnDBError(c, err)
 		return

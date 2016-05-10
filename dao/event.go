@@ -13,9 +13,17 @@ func AddEvent(event *model.Event) (uint64, error) {
 	db := mysql.DB()
 	count := 0
 	err := db.Get(&count, `select count(*) from app_event where uid=? and cid=? and appname=? and active=true`, event.Uid, event.Cid, event.AppName)
-	if err != nil || count > 0 {
+	if err != nil {
 		log.Errorf("add event error or illegal data: %v", err)
 		return 0, err
+	}
+	if count > 0 {
+		sql := `update app_event set endtime = :endtime, active = false where uid = :uid and cid = :cid and appname = :appname and active = true`
+		_, err := db.NamedExec(sql, event)
+		if err != nil {
+			log.Errorf("update app_event error: %v", err)
+			return 0, err
+		}
 	}
 	sql := `insert into app_event(uid, cid, appname, active, createtime,endtime,cpus, mem, instances) values (:uid, :cid, :appname, :active, :createtime, :endtime, :cpus, :mem, :instances)`
 	stmt, err := db.PrepareNamed(sql)
@@ -55,9 +63,17 @@ func UpdateApp(event *model.Event) error {
 	db := mysql.DB()
 	count := 0
 	err := db.Get(&count, `select count(*) from app_event where uid=? and cid=? and appname=? and active=true`, event.Uid, event.Cid, event.AppName)
-	if err != nil || count == 0 {
+	if err != nil {
 		log.Error("can't get app_event by uid and cid and appname and active=true")
 		return errors.New("can't get app_event by uid and cid and appname and active=true")
+	}
+	if count > 0 {
+		sql := `update app_event set endtime = :endtime, active = false where uid = :uid and cid = :cid and appname = :appname and active = true`
+		_, err := db.NamedExec(sql, event)
+		if err != nil {
+			log.Errorf("update app_event error: %v", err)
+			return err
+		}
 	}
 	tx := db.MustBegin()
 	_, err = tx.Exec(`update app_event set endtime=?, active=? where uid=? and cid=? and appname=? and active=true`, event.EndTime, event.Active, event.Uid, event.Cid, event.AppName)
@@ -82,7 +98,7 @@ func UpdateApp(event *model.Event) error {
 	return nil
 }
 
-func GetBilling(uid, pcount, pnum uint64, order, sortby, appname, start, end string) ([]model.Event, error) {
+func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end string) ([]model.Event, error) {
 	db := mysql.DB()
 	if pcount <= 0 || pcount > 100 {
 		pcount = 20
