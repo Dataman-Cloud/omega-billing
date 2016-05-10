@@ -14,7 +14,7 @@ mq:
   port: 5672
   queueTTL: 86400000
   messageTTL: 300000
-  exchange: "application"
+  exchange: "cluster"
   routingkey: "cluster"
   consumeName: "billing"
 mysql:
