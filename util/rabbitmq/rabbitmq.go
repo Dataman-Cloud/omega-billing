@@ -138,11 +138,15 @@ func newEvent(message *model.Message) (*model.Event, error) {
 	}
 	id := ""
 	if mjson.Path("id").Data() == nil {
-		id = strings.Replace(message.Path, "/v2/apps/", "", 1)
+		id, err = util.ParseAppAlias(strings.Replace(message.Path, "/v2/apps/", "", 1))
+		if err != nil {
+			log.Errorf("base32 stdencoding id error1: %v", err)
+			return nil, err
+		}
 	} else {
 		id, err = util.ParseAppAlias(mjson.Path("id").Data().(string))
 		if err != nil {
-			log.Errorf("base32 stdencoding id error: %v", err)
+			log.Errorf("base32 stdencoding id error2: %v", err)
 			return nil, err
 		}
 	}
