@@ -115,7 +115,6 @@ func EventProcess(body []byte) error {
 	case "PUT":
 		event, err := newUpdateEvent(&message)
 		if err == nil {
-			event.Active = false
 			dao.UpdateApp(event)
 		}
 	}
