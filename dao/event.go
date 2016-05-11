@@ -73,6 +73,7 @@ func UpdateApp(event *model.Event) error {
 	tx := db.MustBegin()
 	//_, err := tx.Exec(`update app_event set endtime=?, active=? where uid=? and cid=? and appname=? and active=true`, event.EndTime, event.Active, event.Uid, event.Cid, event.AppName)
 	log.Debug("-----------:", event.EndTime)
+	//_, err := tx.NamedExec(`update app_event set endtime=:endtime, active=:active where uid=:uid and cid=:cid and appname=:appname and active=true`, event)
 	_, err := tx.NamedExec(`update app_event set endtime=:endtime, active=:active where uid=:uid and cid=:cid and appname=:appname and active=true`, event)
 	if err != nil {
 		log.Errorf("update app update table app_event error: %v", err)
@@ -81,7 +82,8 @@ func UpdateApp(event *model.Event) error {
 	}
 	event.Active = true
 	event.CreateTime = event.EndTime
-	_, err = tx.Exec(`insert into app_event(uid, cid, appname, active, createtime, endtime, cpus, mem, instances) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`, event.Uid, event.Cid, event.AppName, event.Active, event.CreateTime, event.EndTime, event.Cpus, event.Mem, event.Instances)
+	//_, err = tx.Exec(`insert into app_event(uid, cid, appname, active, createtime, endtime, cpus, mem, instances) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`, event.Uid, event.Cid, event.AppName, event.Active, event.CreateTime, event.EndTime, event.Cpus, event.Mem, event.Instances)
+	_, err = tx.NamedExec(`insert into app_event(uid, cid, appname, active, createtime, endtime, cpus, mem, instances) values (:uid, :cid, :appname, :active, :createtime, :endtime, :cpus, :mem, :instances)`, event)
 	if err != nil {
 		log.Errorf("update app insert into table app_event error: %v", err)
 		tx.Rollback()
