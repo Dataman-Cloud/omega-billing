@@ -186,7 +186,6 @@ func newUpdateEvent(message *model.Message) (*model.Event, error) {
 		}
 		event.Instances = billing.Instances
 	}
-	event.CreateTime = billing.CreateTime
 	return event, nil
 }
 
