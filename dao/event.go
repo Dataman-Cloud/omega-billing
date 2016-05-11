@@ -71,8 +71,8 @@ func GetBilling(event *model.Event) (model.Event, error) {
 func UpdateApp(event *model.Event) error {
 	db := mysql.DB()
 	tx := db.MustBegin()
-	_, err := tx.NamedExec(`update app_event set endtime=:endtime, active=false where uid=:uid and cid=:cid and appname=:appname and active=true`, event)
-	//_, err := tx.NamedExec(`update app_event set active=false where uid=:uid and cid=:cid and appname=:appname and active=true`, event)
+	//_, err := tx.NamedExec(`update app_event set endtime=:endtime, active=false where uid=:uid and cid=:cid and appname=:appname and active=true`, event)
+	_, err := tx.NamedExec(`update app_event set endtime="`+event.EndTime.Format(time.RFC3339)+`", active=false where uid=:uid and cid=:cid and appname=:appname and active=true`, event)
 	if err != nil {
 		log.Errorf("update app update table app_event error: %v", err)
 		tx.Rollback()
