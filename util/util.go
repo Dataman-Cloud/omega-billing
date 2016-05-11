@@ -23,9 +23,9 @@ func ParseAppAlias(alis string) (string, error) {
 
 func ParseTimeLen(timelen int64) string {
 	if timelen >= day {
-		return fmt.Sprintf("%dd%dh%dm%ds", int64(timelen/day), int64(timelen/hour), int64(timelen/minute), timelen%minute)
+		return fmt.Sprintf("%dd%dh%dm%ds", int64(timelen/day), int64(timelen%day/hour), int64(timelen%hour/minute), timelen%minute)
 	} else if timelen >= hour {
-		return fmt.Sprintf("%dh%dm%ds", int64(timelen/hour), int64(timelen/minute), timelen%minute)
+		return fmt.Sprintf("%dh%dm%ds", int64(timelen/hour), int64(timelen%hour/minute), timelen%minute)
 	} else if timelen >= minute {
 		return fmt.Sprintf("%dm%ds", int64(timelen/minute), timelen%minute)
 	} else {

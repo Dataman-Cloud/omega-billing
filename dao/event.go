@@ -124,8 +124,8 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 			log.Errorf("parse end to int64 error: %v", err)
 			return nil, 0, err
 		}
-		sql = sql + ` and starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339)
-		sql1 = sql1 + ` and starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339)
+		sql = sql + ` and starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `'`
+		sql1 = sql1 + ` and starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `'`
 	}
 	count := 0
 	err := db.Get(&count, sql1, uid)
