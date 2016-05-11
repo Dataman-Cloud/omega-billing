@@ -151,12 +151,12 @@ func newUpdateEvent(message *model.Message) (*model.Event, error) {
 	//timen := time.Now()
 	timen := time.Unix(message.Timestamp, 0)
 	event := &model.Event{
-		Cid:        cid,
-		CreateTime: timen,
-		EndTime:    timen,
-		Active:     true,
-		Uid:        uid,
-		AppName:    ids[1],
+		Cid:       cid,
+		StartTime: timen,
+		EndTime:   timen,
+		Active:    true,
+		Uid:       uid,
+		AppName:   ids[1],
 	}
 	billing, err := dao.GetBilling(event)
 	if cpus := mjson.Path("cpus").Data(); cpus != nil {
@@ -213,12 +213,12 @@ func newDeleteEvent(message *model.Message) (*model.Event, error) {
 	//timen := time.Now()
 	timen := time.Unix(message.Timestamp, 0)
 	event := &model.Event{
-		Cid:        cid,
-		CreateTime: timen,
-		EndTime:    timen,
-		Active:     true,
-		Uid:        uid,
-		AppName:    ids[1],
+		Cid:       cid,
+		StartTime: timen,
+		EndTime:   timen,
+		Active:    true,
+		Uid:       uid,
+		AppName:   ids[1],
 	}
 	billing, err := dao.GetBilling(event)
 	if err != nil {
@@ -263,15 +263,15 @@ func newEvent(message *model.Message) (*model.Event, error) {
 	//timen := time.Now()
 	timen := time.Unix(message.Timestamp, 0)
 	event := &model.Event{
-		Cid:        cid,
-		CreateTime: timen,
-		EndTime:    timen,
-		Active:     true,
-		Uid:        uid,
-		AppName:    ids[1],
-		Cpus:       cpus,
-		Mem:        mem,
-		Instances:  uint32(instances),
+		Cid:       cid,
+		StartTime: timen,
+		EndTime:   timen,
+		Active:    true,
+		Uid:       uid,
+		AppName:   ids[1],
+		Cpus:      cpus,
+		Mem:       mem,
+		Instances: uint32(instances),
 	}
 	return event, nil
 }

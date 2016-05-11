@@ -26,7 +26,7 @@ func AddEvent(event *model.Event) (uint64, error) {
 			return 0, err
 		}
 	}
-	sql := `insert into app_event(uid, cid, appname, active, createtime,endtime,cpus, mem, instances) values (:uid, :cid, :appname, :active, :createtime, :endtime, :cpus, :mem, :instances)`
+	sql := `insert into app_event(uid, cid, appname, active, starttime,endtime,cpus, mem, instances) values (:uid, :cid, :appname, :active, :starttime, :endtime, :cpus, :mem, :instances)`
 	stmt, err := db.PrepareNamed(sql)
 	if err != nil {
 		log.Errorf("add event stmt sql error: %v", err)
@@ -78,7 +78,7 @@ func UpdateApp(event *model.Event) error {
 		return err
 	}
 	event.Active = true
-	_, err = tx.NamedExec(`insert into app_event(uid, cid, appname, active, createtime, endtime, cpus, mem, instances) values (:uid, :cid, :appname, :active, :createtime, :endtime, :cpus, :mem, :instances)`, event)
+	_, err = tx.NamedExec(`insert into app_event(uid, cid, appname, active, starttime, endtime, cpus, mem, instances) values (:uid, :cid, :appname, :active, :starttime, :endtime, :cpus, :mem, :instances)`, event)
 	if err != nil {
 		log.Errorf("update app insert into table app_event error: %v", err)
 		tx.Rollback()
@@ -106,7 +106,7 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 		order = "asc"
 	}
 	if sortby == "" {
-		sortby = "createtime"
+		sortby = "starttime"
 	}
 	sql := `select * from app_event where uid = ?`
 	sql1 := `select count(*) from app_event where uid = ?`
@@ -125,8 +125,8 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 			log.Errorf("parse end to int64 error: %v", err)
 			return nil, 0, err
 		}
-		sql = sql + ` and createtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339)
-		sql1 = sql1 + ` and createtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339)
+		sql = sql + ` and starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339)
+		sql1 = sql1 + ` and starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339)
 	}
 	count := 0
 	err := db.Get(&count, sql1, uid)
@@ -143,10 +143,10 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 	err = db.Select(&billings, sql, uid)
 	for v, billing := range billings {
 		if billing.Active {
-			billings[v].TimeLen = util.ParseTimeLen(time.Now().Unix() - billing.CreateTime.Unix())
+			billings[v].TimeLen = util.ParseTimeLen(time.Now().Unix() - billing.StartTime.Unix())
 			//billings[v].EndTime = time.Now()
 		} else {
-			billings[v].TimeLen = util.ParseTimeLen(billing.EndTime.Unix() - billing.CreateTime.Unix())
+			billings[v].TimeLen = util.ParseTimeLen(billing.EndTime.Unix() - billing.StartTime.Unix())
 		}
 	}
 	return billings, count, err
