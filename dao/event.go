@@ -139,6 +139,7 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 	sql = sql + ` order by ` + sortby + ` ` + order
 	sql = sql + fmt.Sprintf(" limit %d, %d", (pnum-1)*pcount, pcount)
 	billings := []model.Event{}
+	log.Debug("-------sql: ", sql)
 	err = db.Select(&billings, sql, uid)
 	for v, billing := range billings {
 		if billing.Active {
