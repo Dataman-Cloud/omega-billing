@@ -93,7 +93,6 @@ func UpdateApp(event *model.Event) error {
 }
 
 func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end string) ([]model.Event, int, error) {
-	log.Debug("========:", uid, pcount, pnum, order, sortby, appname, start, end)
 	db := mysql.DB()
 	if pcount <= 0 || pcount > 100 {
 		pcount = 20
@@ -125,8 +124,11 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 			log.Errorf("parse end to int64 error: %v", err)
 			return nil, 0, err
 		}
-		sql = sql + ` and starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `'`
-		sql1 = sql1 + ` and starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `'`
+		//sql = sql + ` and starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `'`
+		sql = sql + ` and (starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `' or endtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `')`
+
+		//sql1 = sql1 + ` and starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `'`
+		sql1 = sql1 + ` and (starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `' or endtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `')`
 	}
 	count := 0
 	err := db.Get(&count, sql1, uid)
@@ -140,7 +142,6 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 	sql = sql + ` order by ` + sortby + ` ` + order
 	sql = sql + fmt.Sprintf(" limit %d, %d", (pnum-1)*pcount, pcount)
 	billings := []model.Event{}
-	log.Debug("-------sql: ", sql)
 	err = db.Select(&billings, sql, uid)
 	for v, billing := range billings {
 		if billing.Active {

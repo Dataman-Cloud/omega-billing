@@ -134,6 +134,9 @@ func newUpdateEvent(message *model.Message) (*model.Event, error) {
 	}
 	id, err := util.ParseAppAlias(strings.Replace(message.Path, "/v2/apps/", "", 1))
 	if err != nil {
+		if mb, err := json.Marshal(message); err == nil {
+			log.Debug(string(mb))
+		}
 		log.Errorf("base32 stdencoding id error1: %v %s", err, strings.Replace(message.Path, "/v2/apps/", "", 1))
 		return nil, err
 	}
@@ -196,6 +199,9 @@ func newDeleteEvent(message *model.Message) (*model.Event, error) {
 	}
 	id, err := util.ParseAppAlias(strings.Replace(message.Path, "/v2/apps/", "", 1))
 	if err != nil {
+		if mb, err := json.Marshal(message); err == nil {
+			log.Debug(string(mb))
+		}
 		log.Errorf("base32 stdencoding id error1: %v %s", err, strings.Replace(message.Path, "/v2/apps/", "", 1))
 		return nil, err
 	}
