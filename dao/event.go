@@ -102,7 +102,7 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 	}
 
 	if order == "" {
-		order = "asc"
+		order = "desc"
 	}
 	if sortby == "" {
 		sortby = "starttime"
