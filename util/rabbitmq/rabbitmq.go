@@ -161,18 +161,36 @@ func newUpdateEvent(message *model.Message) (*model.Event, error) {
 		AppName:   ids[1],
 	}
 	billing, err := dao.GetBilling(event)
+	var fcpus float64
+	var fmem float64
+	var finstances uint32
 	cpus := mjson.Path("cpus").Data()
 	mem := mjson.Path("mem").Data()
 	instances := mjson.Path("instances").Data()
-	if cpus == nil || mem == nil || instances == nil {
+	if cpus == nil && mem == nil && instances == nil {
 		return nil, errors.New("cpus mem instances can't be empty")
 	}
-	if cpus.(float64) == billing.Cpus && mem.(float64) == billing.Mem && uint32(instances.(float64)) == billing.Instances {
+	if cpus != nil {
+		fcpus = cpus.(float64)
+	} else {
+		fcpus = billing.Cpus
+	}
+	if mem != nil {
+		fmem = mem.(float64)
+	} else {
+		fmem = billing.Mem
+	}
+	if instances != nil {
+		finstances = uint32(instances.(float64))
+	} else {
+		finstances = billing.Instances
+	}
+	if fcpus == billing.Cpus && fmem == billing.Mem && finstances == billing.Instances {
 		return nil, errors.New("cpus and mem and instances not update")
 	}
-	event.Cpus = cpus.(float64)
-	event.Mem = mem.(float64)
-	event.Instances = uint32(instances.(float64))
+	event.Cpus = fcpus
+	event.Mem = fmem
+	event.Instances = finstances
 	return event, nil
 }
 
