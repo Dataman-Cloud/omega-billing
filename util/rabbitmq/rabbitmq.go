@@ -161,33 +161,18 @@ func newUpdateEvent(message *model.Message) (*model.Event, error) {
 		AppName:   ids[1],
 	}
 	billing, err := dao.GetBilling(event)
-	if cpus := mjson.Path("cpus").Data(); cpus != nil {
-		event.Cpus = cpus.(float64)
-	} else {
-		if err != nil {
-			log.Errorf("get billing error1: %v", err)
-			return nil, err
-		}
-		event.Cpus = billing.Cpus
+	cpus := mjson.Path("cpus").Data()
+	mem := mjson.Path("mem").Data()
+	instances := mjson.Path("instances").Data()
+	if cpus == nil || mem == nil || instances == nil {
+		return nil, errors.New("cpus mem instances can't be empty")
 	}
-	if mem := mjson.Path("mem").Data(); mem != nil {
-		event.Mem = mem.(float64)
-	} else {
-		if err != nil {
-			log.Errorf("get billing error2: %v", err)
-			return nil, err
-		}
-		event.Mem = billing.Mem
+	if cpus.(float64) == billing.Cpus && mem.(float64) == billing.Mem && uint32(instances.(float64)) == billing.Instances {
+		return nil, errors.New("cpus and mem and instances not update")
 	}
-	if instances := mjson.Path("instances").Data(); instances != nil {
-		event.Instances = uint32(instances.(float64))
-	} else {
-		if err != nil {
-			log.Errorf("get billing error3: %v", err)
-			return nil, err
-		}
-		event.Instances = billing.Instances
-	}
+	event.Cpus = cpus.(float64)
+	event.Mem = mem.(float64)
+	event.Instances = uint32(instances.(float64))
 	return event, nil
 }
 
