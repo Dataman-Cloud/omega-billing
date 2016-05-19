@@ -93,6 +93,7 @@ func UpdateApp(event *model.Event) error {
 }
 
 func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end string) ([]model.Event, int, error) {
+	log.Debug("========:", uid, pcount, pnum, order, sortby, appname, start, end)
 	db := mysql.DB()
 	if pcount <= 0 || pcount > 100 {
 		pcount = 20
