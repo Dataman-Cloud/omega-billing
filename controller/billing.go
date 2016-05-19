@@ -84,6 +84,7 @@ func BillingList(c *gin.Context) {
 	sortby := c.Query("sort_by")
 	appname := c.Query("appname")
 	starttime := c.Query("starttime")
+	log.Debug("+++++++", order)
 	/*if starttime == "" {
 		util.ReturnParamError(c, errors.New("can't find starttime"))
 		return
