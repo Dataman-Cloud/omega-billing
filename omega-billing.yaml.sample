@@ -1,0 +1,30 @@
+host: "0.0.0.0"
+port: 5013
+log:
+  console: true
+  appendfile: false
+  file: "./log/omega-audit.log"
+  level: "debug"
+  formatter: "text"
+  maxSize: 1024000
+mq:
+  user: "guest"
+  password: "guest"
+  host: "10.3.20.53"
+  port: 5672
+  queueTTL: 86400000
+  messageTTL: 300000
+  exchange: "cluster"
+  routingkey: "cluster"
+  consumeName: "billing"
+mysql:
+  username: "root"
+  password: "dataman1234"
+  host: "127.0.0.1"
+  port: 3306
+  database: "billing"
+  maxIdleConns: 5
+  maxOpenConns: 50
+redis:
+  host: "localhost"
+  port: 6379

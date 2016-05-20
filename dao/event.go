@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Dataman-Cloud/omega-billing/model"
 	"github.com/Dataman-Cloud/omega-billing/util"
@@ -92,7 +93,7 @@ func UpdateApp(event *model.Event) error {
 	return nil
 }
 
-func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end string) ([]model.Event, int, error) {
+func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end, cid string) ([]model.Event, int, error) {
 	db := mysql.DB()
 	if pcount <= 0 || pcount > 100 {
 		pcount = 20
@@ -110,8 +111,11 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end st
 	sql := `select * from app_event where uid = ?`
 	sql1 := `select count(*) from app_event where uid = ?`
 	if appname != "" {
-		sql = sql + ` and appname = "` + appname + `"`
-		sql1 = sql1 + ` and appname = "` + appname + `"`
+		if cid == "" {
+			return nil, 0, errors.New("not found clusterid")
+		}
+		sql = sql + ` and appname = "` + appname + `" and cid = ` + cid
+		sql1 = sql1 + ` and appname = "` + appname + `" and cid = ` + cid
 	}
 	if start != "" && end != "" {
 		starttime, err := strconv.ParseInt(start, 10, 64)

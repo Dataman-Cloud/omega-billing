@@ -83,6 +83,7 @@ func BillingList(c *gin.Context) {
 	order := c.Query("order")
 	sortby := c.Query("sort_by")
 	appname := c.Query("appname")
+	cid := c.Query("cid")
 	starttime := c.Query("starttime")
 	/*if starttime == "" {
 		util.ReturnParamError(c, errors.New("can't find starttime"))
@@ -93,7 +94,7 @@ func BillingList(c *gin.Context) {
 		util.ReturnParamError(c, errors.New("can't find endtime"))
 		return
 	}*/
-	billings, count, err := dao.GetBillings(uid, pagecount, pagenum, order, sortby, appname, starttime, endtime)
+	billings, count, err := dao.GetBillings(uid, pagecount, pagenum, order, sortby, appname, starttime, endtime, cid)
 	if err != nil {
 		log.Errorf("get billings error: %v", err)
 		util.ReturnDBError(c, err)
