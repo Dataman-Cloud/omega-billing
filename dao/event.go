@@ -141,7 +141,7 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end, c
 	if order != "desc" {
 		order = "asc"
 	}
-	sql = sql + ` order by ` + sortby + ` ` + order
+	sql = sql + ` order by ` + sortby + ` ` + order + ` ,id ` + order
 	sql = sql + fmt.Sprintf(" limit %d, %d", (pnum-1)*pcount, pcount)
 	billings := []model.Event{}
 	err = db.Select(&billings, sql, uid)

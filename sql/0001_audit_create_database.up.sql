@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS app_event (
   cid bigint(20) not null,
   appname varchar(64) not null,
   active tinyint(1) not null,
-  starttime timestamp not null default CURRENT_TIMESTAMP,
+  createtime timestamp not null default CURRENT_TIMESTAMP,
   endtime timestamp not null default CURRENT_TIMESTAMP,
   cpus float(6, 2) not null,
   mem float(6, 2) not null,
