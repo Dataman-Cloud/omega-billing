@@ -11,6 +11,7 @@ var config model.Config
 func init() {
 	viper.SetConfigName("omega-billing")
 	viper.AddConfigPath("./")
+	viper.AddConfigPath("/etc/omega/")
 	viper.AddConfigPath("$HOME/.omega/")
 	viper.AddConfigPath("/")
 	if err := viper.ReadInConfig(); err != nil {
