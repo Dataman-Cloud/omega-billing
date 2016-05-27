@@ -10,7 +10,7 @@ log:
 mq:
   user: "guest"
   password: "guest"
-  host: "10.3.20.53"
+  host: "rmq"
   port: 5672
   queueTTL: 86400000
   messageTTL: 300000
@@ -19,12 +19,12 @@ mq:
   consumeName: "billing"
 mysql:
   username: "root"
-  password: "dataman1234"
-  host: "127.0.0.1"
+  password: "111111"
+  host: "mysql"
   port: 3306
   database: "billing"
   maxIdleConns: 5
   maxOpenConns: 50
 redis:
-  host: "localhost"
+  host: "redis"
   port: 6379
