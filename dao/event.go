@@ -131,6 +131,24 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end, c
 		sql = sql + ` and (starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `' or endtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `')`
 
 		sql1 = sql1 + ` and (starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `' or endtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `')`
+	} else {
+		if start != "" {
+			starttime, err := strconv.ParseInt(start, 10, 64)
+			if err != nil {
+				log.Errorf("parse start to int64 error: %v", err)
+				return nil, 0, err
+			}
+			sql = sql + ` and starttime >= ` + time.Unix(starttime, 0).Format(time.RFC3339)
+			sql1 = sql1 + ` and starttime >= ` + time.Unix(starttime, 0).Format(time.RFC3339)
+		} else if end != "" {
+			endtime, err := strconv.ParseInt(end, 10, 64)
+			if err != nil {
+				log.Errorf("parse end to int64 error: %v", err)
+				return nil, 0, err
+			}
+			sql = sql + `endtime <= ` + time.Unix(endtime, 0).Format(time.RFC3339)
+			sql1 = sql1 + `endtime <= ` + time.Unix(endtime, 0).Format(time.RFC3339)
+		}
 	}
 	count := 0
 	err := db.Get(&count, sql1, uid)
