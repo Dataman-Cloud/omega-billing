@@ -25,28 +25,44 @@ func init() {
 	if err != nil {
 		log.Errorf("connection rabbitmq error: %v", err)
 		log.Flush()
-		panic(-1)
+		panic(1)
 	}
 	channel, err = connection.Channel()
 	if err != nil {
 		log.Errorf("get rabbitmq channel error: %v", err)
 		log.Flush()
-		panic(-1)
+		panic(1)
+	}
+	err = DeclareExchange(channel, GetConfig().Mq.Exchange)
+	if err != nil {
+		log.Errorf("declare exchange %s error: %v", GetConfig().Mq.Exchange, err)
+		log.Flush()
+		panic(1)
 	}
 	queue, err := DeclareQueue(channel, GetConfig().Mq.ConsumeName)
 	if err != nil {
 		log.Errorf("declare queue %s error: %v", GetConfig().Mq.ConsumeName, err)
 		log.Flush()
-		panic(-1)
+		panic(1)
 	}
 	err = channel.QueueBind(queue.Name, GetConfig().Mq.Routingkey, GetConfig().Mq.Exchange, false, nil)
 	if err != nil {
 		log.Errorf("queue bind queuename:%s key:%s exchangename:%s error: %v", queue.Name, GetConfig().Mq.Routingkey, GetConfig().Mq.Exchange, err)
 		log.Flush()
-		panic(-1)
+		panic(1)
 	}
 }
-
+func DeclareExchange(channel *amqp.Channel, name string) error {
+	return channel.ExchangeDeclare(
+		name,
+		"direct",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+}
 func DeclareQueue(channel *amqp.Channel, name string) (amqp.Queue, error) {
 	args := amqp.Table{
 		"x-message-ttl": GetConfig().Mq.MessageTTL,
@@ -80,7 +96,7 @@ func Run() {
 	cs, err := ReciveQueue(GetConfig().Mq.ConsumeName)
 	if err != nil {
 		log.Errorf("rabbitmq subscribe error: %v", err)
-		panic(-1)
+		panic(1)
 	}
 	for {
 		select {
