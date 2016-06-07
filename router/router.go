@@ -28,10 +28,10 @@ func Run() {
 
 	log.Debugf("http listening %s:%d", GetConfig().Host, GetConfig().Port)
 
-	v3 := r.Group("/api/v3/billing", Authenticate)
+	v3 := r.Group("/api/v3", Authenticate)
 	{
-		v3.GET("/list", controller.BillingList)
-		v3.GET("/health", controller.Health)
+		v3.GET("/billing", controller.BillingList)
+		v3.GET("/health/billing", controller.Health)
 	}
 
 	s := &http.Server{
