@@ -31,8 +31,10 @@ func Run() {
 	v3 := r.Group("/api/v3", Authenticate)
 	{
 		v3.GET("/billing", controller.BillingList)
-		v3.GET("/health/billing", controller.Health)
+		//v3.GET("/health/billing", controller.Health)
 	}
+
+	r.GET("/health/billing", controller.Health)
 
 	s := &http.Server{
 		Addr:           fmt.Sprintf("%s:%d", GetConfig().Host, GetConfig().Port),
