@@ -56,3 +56,7 @@ location ~ /api/v3/billing {
   proxy_pass      http://10.3.20.53:5013;
 }
 ```
+
+更新版本v0.1.060800
+1. 把`location ~ /api/v3/billing/(list) {` 修改为
+`location ~ /api/v3/billing {`
