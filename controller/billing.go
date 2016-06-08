@@ -15,7 +15,7 @@ import (
 )
 
 func Health(c *gin.Context) {
-	hstart := time.Now().Unix()
+	hstart := time.Now().UnixNano()
 	health := map[string]map[string]interface{}{
 		"omegaBilling": map[string]interface{}{
 			"status": 0,
@@ -30,8 +30,8 @@ func Health(c *gin.Context) {
 		health["redis"] = map[string]interface{}{"status": 1}
 		health["omegaBilling"]["status"] = 1
 	}
-	health["redis"]["time"] = time.Now().Unix() - hstart
-	health["omegaBilling"]["time"] = time.Now().Unix() - hstart
+	health["redis"]["time"] = (time.Now().UnixNano() - hstart) / 1000000
+	health["omegaBilling"]["time"] = (time.Now().UnixNano() - hstart) / 1000000
 
 	err = mysql.DB().Ping()
 	if err == nil {
@@ -40,7 +40,7 @@ func Health(c *gin.Context) {
 		health["mysql"] = map[string]interface{}{"status": 1}
 		health["omegaBilling"]["status"] = 1
 	}
-	health["mysql"]["time"] = time.Now().Unix() - hstart
+	health["mysql"]["time"] = (time.Now().UnixNano() - hstart) / 1000000
 
 	util.ReturnOK(c, health)
 	return
