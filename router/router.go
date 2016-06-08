@@ -34,7 +34,7 @@ func Run() {
 		//v3.GET("/health/billing", controller.Health)
 	}
 
-	r.GET("/health/billing", controller.Health)
+	r.GET("/api/v3/health/billing", controller.Health)
 
 	s := &http.Server{
 		Addr:           fmt.Sprintf("%s:%d", GetConfig().Host, GetConfig().Port),
