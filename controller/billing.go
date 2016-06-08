@@ -10,6 +10,7 @@ import (
 	log "github.com/cihub/seelog"
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -42,7 +43,7 @@ func Health(c *gin.Context) {
 	}
 	health["mysql"]["time"] = (time.Now().UnixNano() - hstart) / 1000000
 
-	util.ReturnOK(c, health)
+	c.JSON(http.StatusOK, health)
 	return
 }
 
