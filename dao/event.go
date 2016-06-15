@@ -109,13 +109,13 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end, c
 		sortby = "starttime"
 	}
 	sql := `select * from app_event where uid = ?`
-	sql1 := `select count(*) from app_event where uid = ?`
+	//sql1 := `select count(*) from app_event where uid = ?`
 	if appname != "" {
 		if cid == "" {
 			return nil, 0, errors.New("not found clusterid")
 		}
 		sql = sql + ` and appname = "` + appname + `" and cid = ` + cid
-		sql1 = sql1 + ` and appname = "` + appname + `" and cid = ` + cid
+		//sql1 = sql1 + ` and appname = "` + appname + `" and cid = ` + cid
 	}
 	if start != "" && end != "" {
 		starttime, err := strconv.ParseInt(start, 10, 64)
@@ -130,7 +130,7 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end, c
 		}
 		sql = sql + ` and (starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `' or endtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `')`
 
-		sql1 = sql1 + ` and (starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `' or endtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `')`
+		//sql1 = sql1 + ` and (starttime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `' or endtime between '` + time.Unix(starttime, 0).Format(time.RFC3339) + `' and '` + time.Unix(endtime, 0).Format(time.RFC3339) + `')`
 	} else {
 		if start != "" {
 			starttime, err := strconv.ParseInt(start, 10, 64)
@@ -139,7 +139,7 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end, c
 				return nil, 0, err
 			}
 			sql = sql + ` and starttime >= '` + time.Unix(starttime, 0).Format(time.RFC3339) + `'`
-			sql1 = sql1 + ` and starttime >= '` + time.Unix(starttime, 0).Format(time.RFC3339) + `'`
+			//sql1 = sql1 + ` and starttime >= '` + time.Unix(starttime, 0).Format(time.RFC3339) + `'`
 		} else if end != "" {
 			endtime, err := strconv.ParseInt(end, 10, 64)
 			if err != nil {
@@ -147,23 +147,23 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end, c
 				return nil, 0, err
 			}
 			sql = sql + ` and endtime <= '` + time.Unix(endtime, 0).Format(time.RFC3339) + `'`
-			sql1 = sql1 + ` and endtime <= '` + time.Unix(endtime, 0).Format(time.RFC3339) + `'`
+			//sql1 = sql1 + ` and endtime <= '` + time.Unix(endtime, 0).Format(time.RFC3339) + `'`
 		}
 	}
-	count := 0
+	//count := 0
 	log.Debug("---------: ", sql)
-	err := db.Get(&count, sql1, uid)
+	/*err := db.Get(&count, sql1, uid)
 	if err != nil {
 		log.Errorf("get billing count error: %v", err)
 		return nil, 0, err
-	}
+	}*/
 	if order != "desc" {
 		order = "asc"
 	}
 	sql = sql + ` order by ` + sortby + ` ` + order + ` ,id ` + order
 	sql = sql + fmt.Sprintf(" limit %d, %d", (pnum-1)*pcount, pcount)
 	billings := []model.Event{}
-	err = db.Select(&billings, sql, uid)
+	err := db.Select(&billings, sql, uid)
 	for v, billing := range billings {
 		if billing.Active {
 			billings[v].TimeLen = util.ParseTimeLen(time.Now().Unix() - billing.StartTime.Unix())
@@ -172,5 +172,5 @@ func GetBillings(uid, pcount, pnum uint64, order, sortby, appname, start, end, c
 			billings[v].TimeLen = util.ParseTimeLen(billing.EndTime.Unix() - billing.StartTime.Unix())
 		}
 	}
-	return billings, count, err
+	return billings, len(billings), err
 }
