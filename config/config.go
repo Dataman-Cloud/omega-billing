@@ -112,7 +112,7 @@ func NewEnvEntry() *EnvEntry {
 			envEntryValue, err = strconv.ParseInt(env, 10, 16)
 			_, ok := envEntryValue.(int64)
 			if !ok {
-				continue
+				exitCheckEnv(typeField.Name, err)
 			}
 			envEntryValue = int16(envEntryValue.(int64))
 		case uint16:
@@ -120,7 +120,7 @@ func NewEnvEntry() *EnvEntry {
 
 			_, ok := envEntryValue.(uint64)
 			if !ok {
-				continue
+				exitCheckEnv(typeField.Name, err)
 			}
 			envEntryValue = uint16(envEntryValue.(uint64))
 		case uint64:
