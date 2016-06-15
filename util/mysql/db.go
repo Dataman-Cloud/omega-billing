@@ -11,7 +11,7 @@ import (
 	"sync"
 )
 
-func init() {
+func MysqlInit() {
 	DB()
 	upgradeDB()
 }

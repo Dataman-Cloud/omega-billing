@@ -19,7 +19,7 @@ import (
 var channel *amqp.Channel
 var connection *amqp.Connection
 
-func init() {
+func MqInit() {
 	var err error
 	connection, err = amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%d/", GetConfig().Mq.User, GetConfig().Mq.PassWord, GetConfig().Mq.Host, GetConfig().Mq.Port))
 	if err != nil {
@@ -68,6 +68,7 @@ func DeclareQueue(channel *amqp.Channel, name string) (amqp.Queue, error) {
 		"x-message-ttl": GetConfig().Mq.MessageTTL,
 		"x-expires":     GetConfig().Mq.QueueTTL,
 	}
+	log.Debug("------:", args)
 	return channel.QueueDeclare(
 		name,
 		true,

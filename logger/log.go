@@ -5,7 +5,7 @@ import (
 	log "github.com/cihub/seelog"
 )
 
-func init() {
+func LogInit() {
 	logger, err := log.LoggerFromConfigAsString(logConfig())
 	if err == nil {
 		log.ReplaceLogger(logger)

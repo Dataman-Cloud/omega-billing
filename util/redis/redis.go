@@ -9,7 +9,7 @@ import (
 
 var pool *redis.Pool
 
-func init() {
+func RedisInit() {
 	pool = initPool()
 }
 
