@@ -4,7 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"github.com/Dataman-Cloud/omega-billing/model"
-	log "github.com/Sirupsen/logrus"
+	//log "github.com/Sirupsen/logrus"
+	log "github.com/cihub/seelog"
 	"os"
 	"reflect"
 	"strconv"
@@ -18,32 +19,32 @@ func GetConfig() model.Config {
 }
 
 type EnvEntry struct {
-	BILLING_HOST                string `required:"true"`
-	BILLING_PORT                uint16 `required:"true"`
-	BILLING_LOG_CONSOLE         bool   `required:"true"`
-	BILLING_LOG_APPEND_FILE     bool   `required:"true"`
-	BILLING_LOG_FILE            string `required:"true"`
-	BILLING_LOG_LEVEL           string `required:"true"`
-	BILLING_LOG_FORMATTER       string `required:"true"`
-	BILLING_LOG_MAX_SIZE        uint64 `required:"true"`
-	BILLING_MQ_USER             string `required:"true"`
-	BILLING_MQ_PASSWD           string `required:"true"`
-	BILLING_MQ_HOST             string `required:"true"`
-	BILLING_MQ_PORT             uint16 `required:"true"`
-	BILLING_MQ_QUEUE_TTL        int64  `required:"true"`
-	BILLING_MQ_MSG_TTL          int64  `required:"true"`
-	BILLING_MQ_EXCHANGE         string `required:"true"`
-	BILLING_MQ_ROUTE_KEY        string `required:"true"`
-	BILLING_MQ_CONSUME_NAME     string `required:"true"`
-	BILLING_MSQL_USER           string `required:"true"`
-	BILLING_MSQL_PASSWD         string `required:"true"`
-	BILLING_MSQL_HOST           string `required:"true"`
-	BILLING_MSQL_PORT           uint16 `required:"true"`
-	BILLING_MSQL_DB             string `required:"true"`
-	BILLING_MSQL_MAX_IDLE_CONNS uint16 `required:"true"`
-	BILLING_MSQL_MAX_OPEN_CONNS uint16 `required:"true"`
-	BILLING_REDIS_HOST          string `required:"true"`
-	BILLING_REDIS_PORT          uint16 `required:"true"`
+	BILLING_NET_HOST             string `required:"true"`
+	BILLING_NET_PORT             uint16 `required:"true"`
+	BILLING_LOG_CONSOLE          bool   `required:"true"`
+	BILLING_LOG_APPEND_FILE      bool   `required:"true"`
+	BILLING_LOG_FILE             string `required:"true"`
+	BILLING_LOG_LEVEL            string `required:"true"`
+	BILLING_LOG_FORMATTER        string `required:"true"`
+	BILLING_LOG_MAX_SIZE         uint64 `required:"true"`
+	BILLING_MQ_USER              string `required:"true"`
+	BILLING_MQ_PASSWD            string `required:"true"`
+	BILLING_MQ_HOST              string `required:"true"`
+	BILLING_MQ_PORT              uint16 `required:"true"`
+	BILLING_MQ_QUEUE_TTL         int64  `required:"true"`
+	BILLING_MQ_MSG_TTL           int64  `required:"true"`
+	BILLING_MQ_EXCHANGE          string `required:"true"`
+	BILLING_MQ_ROUTE_KEY         string `required:"true"`
+	BILLING_MQ_CONSUME_NAME      string `required:"true"`
+	BILLING_MYSQL_USER           string `required:"true"`
+	BILLING_MYSQL_PASSWD         string `required:"true"`
+	BILLING_MYSQL_HOST           string `required:"true"`
+	BILLING_MYSQL_PORT           uint16 `required:"true"`
+	BILLING_MYSQL_DB             string `required:"true"`
+	BILLING_MYSQL_MAX_IDLE_CONNS uint16 `required:"true"`
+	BILLING_MYSQL_MAX_OPEN_CONNS uint16 `required:"true"`
+	BILLING_REDIS_HOST           string `required:"true"`
+	BILLING_REDIS_PORT           uint16 `required:"true"`
 }
 
 func InitConfig(envFile string) *model.Config {
@@ -51,8 +52,8 @@ func InitConfig(envFile string) *model.Config {
 
 	envEntry := NewEnvEntry()
 
-	config.Host = envEntry.BILLING_HOST
-	config.Port = envEntry.BILLING_PORT
+	config.Host = envEntry.BILLING_NET_HOST
+	config.Port = envEntry.BILLING_NET_PORT
 
 	config.Log.AppendFile = envEntry.BILLING_LOG_APPEND_FILE
 	config.Log.Console = envEntry.BILLING_LOG_CONSOLE
@@ -61,13 +62,13 @@ func InitConfig(envFile string) *model.Config {
 	config.Log.File = envEntry.BILLING_LOG_FILE
 	config.Log.MaxSize = envEntry.BILLING_LOG_MAX_SIZE
 
-	config.Mc.DataBase = envEntry.BILLING_MSQL_DB
-	config.Mc.Host = envEntry.BILLING_MSQL_HOST
-	config.Mc.Port = envEntry.BILLING_MSQL_PORT
-	config.Mc.UserName = envEntry.BILLING_MSQL_USER
-	config.Mc.PassWord = envEntry.BILLING_MSQL_PASSWD
-	config.Mc.MaxIdleConns = envEntry.BILLING_MSQL_MAX_IDLE_CONNS
-	config.Mc.MaxOpenConns = envEntry.BILLING_MSQL_MAX_OPEN_CONNS
+	config.Mc.DataBase = envEntry.BILLING_MYSQL_DB
+	config.Mc.Host = envEntry.BILLING_MYSQL_HOST
+	config.Mc.Port = envEntry.BILLING_MYSQL_PORT
+	config.Mc.UserName = envEntry.BILLING_MYSQL_USER
+	config.Mc.PassWord = envEntry.BILLING_MYSQL_PASSWD
+	config.Mc.MaxIdleConns = envEntry.BILLING_MYSQL_MAX_IDLE_CONNS
+	config.Mc.MaxOpenConns = envEntry.BILLING_MYSQL_MAX_OPEN_CONNS
 
 	config.Mq.ConsumeName = envEntry.BILLING_MQ_CONSUME_NAME
 	config.Mq.Exchange = envEntry.BILLING_MQ_EXCHANGE
@@ -161,7 +162,7 @@ func loadEnvFile(envfile string) {
 			if len(os.Getenv(strings.ToUpper(key))) == 0 {
 				err1 := os.Setenv(strings.ToUpper(key), val)
 				if err1 != nil {
-					log.Errorln(err1.Error())
+					log.Error(err1.Error())
 				}
 			}
 		}
@@ -201,11 +202,12 @@ func removeComments(s string) (_ string) {
 }
 
 func exitMissingEnv(env string) {
-	log.Fatalf("program exit missing config for env %s", env)
+	log.Errorf("program exit missing config for env %s", env)
+	log.Flush()
 	os.Exit(1)
 }
 
 func exitCheckEnv(env string, err error) {
-	log.Fatalf("Check env %s, %s", env, err.Error())
+	log.Errorf("Check env %s, %s", env, err.Error())
 
 }

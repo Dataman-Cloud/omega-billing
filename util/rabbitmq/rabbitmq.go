@@ -68,7 +68,6 @@ func DeclareQueue(channel *amqp.Channel, name string) (amqp.Queue, error) {
 		"x-message-ttl": GetConfig().Mq.MessageTTL,
 		"x-expires":     GetConfig().Mq.QueueTTL,
 	}
-	log.Debug("------:", args)
 	return channel.QueueDeclare(
 		name,
 		true,
@@ -97,6 +96,7 @@ func Run() {
 	cs, err := ReciveQueue(GetConfig().Mq.ConsumeName)
 	if err != nil {
 		log.Errorf("rabbitmq subscribe error: %v", err)
+		log.Flush()
 		panic(1)
 	}
 	for {
