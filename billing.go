@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	envFile = flag.String("config", "env_file", "")
+	envFile = flag.String("config", "deploy/env", "")
 )
 
 func main() {
