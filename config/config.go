@@ -47,9 +47,46 @@ type EnvEntry struct {
 }
 
 func InitConfig(envFile string) *model.Config {
-	envEntry := &EnvEntry{}
-
 	loadEnvFile(envFile)
+
+	envEntry := NewEnvEntry()
+
+	config.Host = envEntry.BILLING_HOST
+	config.Port = envEntry.BILLING_PORT
+
+	config.Log.AppendFile = envEntry.BILLING_LOG_APPEND_FILE
+	config.Log.Console = envEntry.BILLING_LOG_CONSOLE
+	config.Log.Formatter = envEntry.BILLING_LOG_FORMATTER
+	config.Log.Level = envEntry.BILLING_LOG_LEVEL
+	config.Log.File = envEntry.BILLING_LOG_FILE
+	config.Log.MaxSize = envEntry.BILLING_LOG_MAX_SIZE
+
+	config.Mc.DataBase = envEntry.BILLING_MSQL_DB
+	config.Mc.Host = envEntry.BILLING_MSQL_HOST
+	config.Mc.Port = envEntry.BILLING_MSQL_PORT
+	config.Mc.UserName = envEntry.BILLING_MSQL_USER
+	config.Mc.PassWord = envEntry.BILLING_MSQL_PASSWD
+	config.Mc.MaxIdleConns = envEntry.BILLING_MSQL_MAX_IDLE_CONNS
+	config.Mc.MaxOpenConns = envEntry.BILLING_MSQL_MAX_OPEN_CONNS
+
+	config.Mq.ConsumeName = envEntry.BILLING_MQ_CONSUME_NAME
+	config.Mq.Exchange = envEntry.BILLING_MQ_EXCHANGE
+	config.Mq.Host = envEntry.BILLING_MQ_HOST
+	config.Mq.MessageTTL = envEntry.BILLING_MQ_MSG_TTL
+	config.Mq.PassWord = envEntry.BILLING_MQ_PASSWD
+	config.Mq.Port = envEntry.BILLING_MQ_PORT
+	config.Mq.QueueTTL = envEntry.BILLING_MQ_QUEUE_TTL
+	config.Mq.Routingkey = envEntry.BILLING_MQ_ROUTE_KEY
+	config.Mq.User = envEntry.BILLING_MQ_USER
+
+	config.Rc.Host = envEntry.BILLING_REDIS_HOST
+	config.Rc.Port = envEntry.BILLING_REDIS_PORT
+
+	return &config
+}
+
+func NewEnvEntry() *EnvEntry {
+	envEntry := &EnvEntry{}
 
 	val := reflect.ValueOf(envEntry).Elem()
 
@@ -100,38 +137,7 @@ func InitConfig(envFile string) *model.Config {
 		value.Set(reflect.ValueOf(envEntryValue))
 	}
 
-	config.Host = envEntry.BILLING_HOST
-	config.Port = envEntry.BILLING_PORT
-
-	config.Log.AppendFile = envEntry.BILLING_LOG_APPEND_FILE
-	config.Log.Console = envEntry.BILLING_LOG_CONSOLE
-	config.Log.Formatter = envEntry.BILLING_LOG_FORMATTER
-	config.Log.Level = envEntry.BILLING_LOG_LEVEL
-	config.Log.File = envEntry.BILLING_LOG_FILE
-	config.Log.MaxSize = envEntry.BILLING_LOG_MAX_SIZE
-
-	config.Mc.DataBase = envEntry.BILLING_MSQL_DB
-	config.Mc.Host = envEntry.BILLING_MSQL_HOST
-	config.Mc.Port = envEntry.BILLING_MSQL_PORT
-	config.Mc.UserName = envEntry.BILLING_MSQL_USER
-	config.Mc.PassWord = envEntry.BILLING_MSQL_PASSWD
-	config.Mc.MaxIdleConns = envEntry.BILLING_MSQL_MAX_IDLE_CONNS
-	config.Mc.MaxOpenConns = envEntry.BILLING_MSQL_MAX_OPEN_CONNS
-
-	config.Mq.ConsumeName = envEntry.BILLING_MQ_CONSUME_NAME
-	config.Mq.Exchange = envEntry.BILLING_MQ_EXCHANGE
-	config.Mq.Host = envEntry.BILLING_MQ_HOST
-	config.Mq.MessageTTL = envEntry.BILLING_MQ_MSG_TTL
-	config.Mq.PassWord = envEntry.BILLING_MQ_PASSWD
-	config.Mq.Port = envEntry.BILLING_MQ_PORT
-	config.Mq.QueueTTL = envEntry.BILLING_MQ_QUEUE_TTL
-	config.Mq.Routingkey = envEntry.BILLING_MQ_ROUTE_KEY
-	config.Mq.User = envEntry.BILLING_MQ_USER
-
-	config.Rc.Host = envEntry.BILLING_REDIS_HOST
-	config.Rc.Port = envEntry.BILLING_REDIS_PORT
-
-	return &config
+	return envEntry
 }
 
 func loadEnvFile(envfile string) {
