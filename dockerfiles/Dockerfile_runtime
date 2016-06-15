@@ -1,0 +1,8 @@
+FROM demoregistry.dataman-inc.com/library/centos7-base:20160602202509
+MAINTAINER yqguo yqguo@dataman-inc.com
+
+ENV CGO_ENABLED "0 go build -v"
+COPY /data/build/omega-billing/omega-billing /
+ENTRYPOINT ["./omega-billing"]
+
+#demoregistry.dataman-inc.com/shurenyun/centos7-omega-billing:tag
