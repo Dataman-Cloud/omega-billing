@@ -7,3 +7,7 @@ doc:
 	godoc -http=:6060 -index
 run: build
 	./omega-billing
+fmt:
+	go fmt
+test:
+	go test
