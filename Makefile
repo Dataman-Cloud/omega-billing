@@ -8,6 +8,6 @@ doc:
 run: build
 	./omega-billing
 fmt:
-	go fmt
+	go fmt ./...
 test:
-	go test
+	go test ./...
