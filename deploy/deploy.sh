@@ -1,10 +1,8 @@
 #!/bin/bash
 
-#!/bin/bash
-
 PRIVILEGED=false
 
-curl -v -X POST http://10.3.33.5:8080/v2/apps -H Content-Type:application/json -d \
+curl -v -X POST http://$MARATHON_API_URL/v2/apps -H Content-Type:application/json -d \
 '{
       "id": "shurenyun-'$TASKENV'-'$SERVICE'",
       "cpus": '$CPUS',
