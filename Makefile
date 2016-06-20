@@ -2,7 +2,7 @@
 export GO15VENDOREXPERIMENT=1
 default: build
 build: fmt 
-	go build -v -o omega-billing billing.go
+	go build -v -o omega-billing ./
 doc:
 	godoc -http=:6060 -index
 run: build
