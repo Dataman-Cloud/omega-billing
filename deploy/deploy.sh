@@ -2,7 +2,7 @@
 
 PRIVILEGED=false
 
-curl -v -X POST http://$MARATHON_API_URL/v2/apps -H Content-Type:application/json -d \
+curl -v -X POST $MARATHON_API_URL/v2/apps -H Content-Type:application/json -d \
 '{
       "id": "shurenyun-'$TASKENV'-'$SERVICE'",
       "cpus": '$CPUS',
