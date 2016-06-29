@@ -7,4 +7,5 @@ COPY omega-billing/omega-billing /
 COPY omega-billing/sql /sql
 ENTRYPOINT ["./omega-billing"]
 
+
 #demoregistry.dataman-inc.com/shurenyun/centos7-omega-billing:tag
