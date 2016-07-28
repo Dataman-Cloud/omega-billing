@@ -3,9 +3,10 @@ package util
 import (
 	"encoding/base32"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 var minute = int64(60)
@@ -42,7 +43,7 @@ func ReturnDBError(c *gin.Context, err error) {
 }
 
 func ReturnParamError(c *gin.Context, err error) {
-	c.JSON(http.StatusInternalServerError, gin.H{"code": 18002, "data": "", "error": err})
+	c.JSON(http.StatusBadRequest, gin.H{"code": 18002, "data": "", "error": err})
 }
 
 func Header(c *gin.Context, key string) (string, bool) {
